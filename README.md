@@ -1,4 +1,4 @@
-This project was build for the Medium tutorial: How to fetch APIs in react and effectively use data responses to create graphs using recharts How to call APIS by  by Kevin Lohier 📚💻.
+This project was build for the Medium tutorial: How to fetch APIs in react and effectively use data responses to create graphs using recharts How to call APIS . by Kevin Lohier 📚💻.
 
 ## Available Scripts
 
