@@ -1,0 +1,142 @@
+//this line imports react functionality 
+import React from 'react';
+import { useEffect, useState } from "react";
+import axios from 'axios'
+import { LineChart, Line, Tooltip } from 'recharts';
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
+
+function CustomTooltip(props) {
+    console.log(props)
+
+
+    return (
+        <div>
+            <div>{ToolTipMessage(props.label)}</div>
+            <div> $ {props.data[props.label]}</div>
+        </div>
+    )
+}
+
+function ToolTipMessage(msg) {
+
+    var daysAgo = 12 - msg;
+    if (daysAgo > 2) {
+        var msg = daysAgo + " Days Ago"
+        return (msg)
+    }
+    else if (daysAgo == 1) {
+        return ("Today")
+    }
+    else if (daysAgo == 2) {
+        return ("yesterday")
+    }
+}
+
+function ToolTipPrice(msg) {
+
+}
+
+
+export default function App() {
+    const [error, setError] = useState(null);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [items, setItems] = useState([]);
+    const [date, setDate] = useState([])
+    const [money, setMoney] = useState([])
+    const data = [];
+    const trial = []
+    // Note: the empty deps array [] means
+    // this useEffect will run once
+    // similar to componentDidMount()
+    useEffect(() => {
+        fetch("https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=IBM&apikey=746JE8JCFG8UEYFB")
+            .then(res => res.json())
+            .then(
+                (result) => {
+
+                    var i = 0
+                    var A = [];
+                    var Money = [];
+                    for (var instance in result["Weekly Time Series"]) {
+                        var mydata = (result["Weekly Time Series"][instance])
+                        A.push(instance)
+                        //console.log(mydata)
+                        data.push(mydata)
+                        //console.log( parseFloat(mydata["1. open"]) )
+                        Money.push(parseFloat(mydata["1. open"]))
+                        if (i > 10) {
+                            break
+                        }
+
+                        else {
+                            i++;
+                        }
+                    }
+                    //var isArray = Array.isArray(data);
+                    setItems(data.reverse())
+                    setDate(A)
+                    setMoney(Money.reverse())
+                    //console.log(mydata)
+                    //console.log(result)
+
+                },
+
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                    setIsLoaded(true);
+                    setError(error);
+                }
+            )
+
+            .then(console.log(typeof data))
+            .then(console.log("true", data))
+            .then(console.log("reverse", data.reverse()))
+            .then(console.log(typeof data_1))
+            .then(console.log(typeof trial))
+            .then(console.log(Array.isArray(data)))
+    }, [])
+
+
+
+
+
+
+    return (
+        <div className="articles">
+
+
+            <Row >
+                <Col>
+
+
+
+
+                    <LineChart width={500} height={250} margin={{ top: 5, right: 30, left: 20, bottom: 5 }} data={items}>
+
+
+
+                        <Line dataKey="1. open" stroke="rgb(0,200,5)" yAxisId="100" />
+
+                        <Tooltip content={<CustomTooltip data={money} />} />
+                    </LineChart>
+
+                    <div className="bottom">
+                        <span className="margin"><Button variant="outline" size="xxl" > Days </Button></span>
+                        <span className="margin"><Button variant="outline-secondary" size="sm"> Weeks </Button></span>
+                        <span className="margin"><Button variant="outline-secondary" size="sm">Months </Button></span>
+                        <span className="margin"><Button
+                            bsClass="custom-btn" variant="outline-secondary" size="sm"> Years </Button></span>
+
+                    </div>
+                </Col>
+            </Row>
+
+        </div>
+    )
+}
+
+
